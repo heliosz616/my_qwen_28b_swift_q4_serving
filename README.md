@@ -2,6 +2,16 @@
 
 Windows 上基于 llama.cpp 的 Swift Qwen3.8-27B 本地推理服务。模型权重为上游发布的 IQ4_XS；默认单流 128K、Q8_0 K/V 和 MTP，每轮最多预测 2 tokens。仓库名称中的 28b 为仓库标识，实际模型是 27B。
 
+本部署仅包含 Swift，不提供旧 Humanlike 模型配置：
+
+| 项目 | 名称 |
+| --- | --- |
+| 模型仓库 | `bartowski/ukisai_Swift-Qwen3.8-27b-GGUF` |
+| 权重文件 | `ukisai_Swift-Qwen3.8-27b-IQ4_XS.gguf` |
+| 客户端 Model ID | `swift-qwen3.8-27b` |
+
+MTP 使用该模型的预测头，不是另一个需要配置名称的服务模型。
+
 包含 OpenAI-compatible 网关、流式 reasoning/tool calls、多轮工具结果、按用户隔离的 Session、SSD KV 保存恢复、鉴权及监督进程。默认一次只运行一个模型、一个生成请求，其余请求排队。模型、密钥、聊天记录、KV 快照、运行日志及机器配置不随源码分发。
 
 ## 环境与安装

@@ -24,4 +24,4 @@ if ($Download.ExitCode -ne 0) { throw 'Model download failed; rerun to resume' }
 if (-not (Test-Path "$PSScriptRoot\config.local.json")) {
     Copy-Item "$PSScriptRoot\config.example.json" "$PSScriptRoot\config.local.json"
 }
-Write-Host 'Prepared. Review config.local.json, then run humanlike/start.ps1.'
+Write-Host 'Prepared. Review config.local.json, then run qwen27b/start.ps1.'

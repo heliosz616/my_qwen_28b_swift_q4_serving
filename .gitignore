@@ -1,11 +1,11 @@
 **/.venv/
 **/__pycache__/
 **/.pytest_cache/
-humanlike/vendor/
-humanlike/build/
-humanlike/models/
-humanlike/state/
-humanlike/reports/
+qwen27b/vendor/
+qwen27b/build/
+qwen27b/models/
+qwen27b/state/
+qwen27b/reports/
 **/*.local.json
 **/*.log
 runtime/*.lock

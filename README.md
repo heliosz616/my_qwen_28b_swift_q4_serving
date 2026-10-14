@@ -13,21 +13,21 @@ Windows 上基于 llama.cpp 的 Swift Qwen3.8-27B 本地推理服务。模型权
 在仓库根目录的 PowerShell 执行：
 
 ```powershell
-.\humanlike\bootstrap.ps1
+.\qwen27b\bootstrap.ps1
 ```
 
-安装并行下载已固定 revision/hash 的模型及准备运行时，随后编译。模型 SHA256 校验通过才提升为正式文件。下载中断可重跑；构建修补固定 llama.cpp commit，冲突时停止而不覆盖自定义源码。Python 依赖见 `humanlike/requirements.lock.txt`。源码补丁包含上游 MIT 代码，见 `licenses/`；模型遵循其上游许可，不由本仓库重新授权。
+安装并行下载已固定 revision/hash 的模型及准备运行时，随后编译。模型 SHA256 校验通过才提升为正式文件。下载中断可重跑；构建修补固定 llama.cpp commit，冲突时停止而不覆盖自定义源码。Python 依赖见 `qwen27b/requirements.lock.txt`。源码补丁包含上游 MIT 代码，见 `licenses/`；模型遵循其上游许可，不由本仓库重新授权。
 
 ## 启动与连接
 
 ```powershell
-.\humanlike\start.ps1
+.\qwen27b\start.ps1
 ```
 
 默认监听 `127.0.0.1:8000`。启动返回不代表加载完成；鉴权健康检查需返回 `ready`：
 
 ```powershell
-$swiftKey = (Get-Content .\humanlike\state\api-key.txt -Raw).Trim()
+$swiftKey = (Get-Content .\qwen27b\state\api-key.txt -Raw).Trim()
 Invoke-RestMethod -Uri 'http://127.0.0.1:8000/health' -Headers @{Authorization="Bearer $swiftKey"} -NoProxy
 ```
 
@@ -35,7 +35,7 @@ Invoke-RestMethod -Uri 'http://127.0.0.1:8000/health' -Headers @{Authorization="
 | --- | --- |
 | OpenAI Base URL | `http://127.0.0.1:8000/v1` |
 | Model | `swift-qwen3.8-27b` |
-| API Key | 启动时随机生成在 `humanlike/state/api-key.txt`，或部署者设置 `HUMANLIKE_API_KEY` |
+| API Key | 启动时随机生成在 `qwen27b/state/api-key.txt`，或部署者设置 `HUMANLIKE_API_KEY` |
 | Thinking | 默认开启，`reasoning_effort=medium`；`none` 可关闭 |
 | Session | 可选自定义请求头 `X-Session-ID`，同一对话保持固定 |
 
@@ -46,26 +46,28 @@ Session ID 是本服务扩展，不是 OpenAI 标准必填字段。每轮仍发�
 停止：
 
 ```powershell
-.\humanlike\stop.ps1
+.\qwen27b\stop.ps1
 ```
 
 ## 局域网与安全
 
-修改 `humanlike/config.local.json` 的 `host` 为服务器实际局域网 IP，`allowed_networks` 为授权网段。客户端 URL 替换为该 IP。Windows 防火墙只放行该本地 IP、所需端口及远端网段；安装脚本不自动开放防火墙。内部引擎只监听回环地址 8081，并使用独立密钥；外部网关不开放原生 slot 文件管理接口，也不信任 `X-Forwarded-For`。
+修改 `qwen27b/config.local.json` 的 `host` 为服务器实际局域网 IP，`allowed_networks` 为授权网段。客户端 URL 替换为该 IP。Windows 防火墙只放行该本地 IP、所需端口及远端网段；安装脚本不自动开放防火墙。内部引擎只监听回环地址 8081，并使用独立密钥；外部网关不开放原生 slot 文件管理接口，也不信任 `X-Forwarded-For`。
 
 每位用户可签发独立 Key（仅显示一次），会话按用户隔离：
 
 ```powershell
-.\humanlike\.venv\Scripts\python.exe .\humanlike\scripts\users.py grant client1
-.\humanlike\.venv\Scripts\python.exe .\humanlike\scripts\users.py list
-.\humanlike\.venv\Scripts\python.exe .\humanlike\scripts\users.py revoke client1
+.\qwen27b\.venv\Scripts\python.exe .\qwen27b\scripts\users.py grant client1
+.\qwen27b\.venv\Scripts\python.exe .\qwen27b\scripts\users.py list
+.\qwen27b\.venv\Scripts\python.exe .\qwen27b\scripts\users.py revoke client1
 ```
 
 状态目录限制 NTFS ACL。授权表只存 Key 摘要。局域网 HTTP 不加密传输，非可信网络需自行配置 HTTPS。源码发布不得包含 `state/`、`reports/`、本地配置或模型文件。
 
 ## 配置和维护
 
-历史代码目录及环境变量保留 `humanlike`/`HUMANLIKE_*` 名称，以维持接口与补丁兼容；默认下载和运行的只有 Swift。
+部署目录为 `qwen27b`。环境变量仍保留 `HUMANLIKE_*` 名称，以维持接口与补丁兼容；默认下载和运行的只有 Swift。
+
+旧版本使用 `humanlike` 目录。已有安装迁移时先停止服务，再迁移本地配置、模型及状态目录；不要直接复用旧虚拟环境的命令入口或含绝对路径的构建缓存，应在新目录重建环境和运行时。模型 ID、API 和 Key 无需因目录更名而改变。
 
 - `config.local.json`：设备、分层、上下文、Q8 KV、MTP 参数、队列与磁盘配额。
 - `models.example.json`：可选模型目录模板。复制为 `models.local.json` 才启用按请求切换；每个注册模型须有独立 manifest 和快照目录，网络策略一致。

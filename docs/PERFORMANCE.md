@@ -17,10 +17,10 @@
 不需要 GPU 的接口/存储测试：
 
 ```powershell
-.\humanlike\.venv\Scripts\python.exe -m pytest .\humanlike\tests -q
+.\qwen27b\.venv\Scripts\python.exe -m pytest .\qwen27b\tests -q
 ```
 
-启动真实服务后，在 `humanlike` 目录执行（会产生本地测试会话和日志）：
+启动真实服务后，在 `qwen27b` 目录执行（会产生本地测试会话和日志）：
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/validate.py smoke

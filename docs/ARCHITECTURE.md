@@ -4,7 +4,7 @@
 
 主模型与 MTP 的状态共同保存/恢复，避免只有主模型 KV 恢复而预测头上下文丢失。前缀编辑按实际公共前缀处理；不能仅凭 Session ID 宣称命中。思考和工具消息沿原生模板处理，支持 SSE 分块。
 
-固定 llama.cpp b11429 commit `d81235049384534c167caea52b85a694f6103d14`。`humanlike/patches/runtime.patch` 从已验证运行时源代码导出，包含 checkpoint、热缓存延迟、CUDA GQA 复用、传输观测、MTP 状态保存/恢复、Vulkan 主机设备选择和 MTP prefill 调度。补丁内含上游测试和版权上下文，保留许可证，不包含模型或本机数据。
+固定 llama.cpp b11429 commit `d81235049384534c167caea52b85a694f6103d14`。`qwen27b/patches/runtime.patch` 从已验证运行时源代码导出，包含 checkpoint、热缓存延迟、CUDA GQA 复用、传输观测、MTP 状态保存/恢复、Vulkan 主机设备选择和 MTP prefill 调度。补丁内含上游测试和版权上下文，保留许可证，不包含模型或本机数据。
 
 MTP prefill 无预测输出的批次只构建必要 KV；`HUMANLIKE_MTP_NO_PIPELINE=1` 只禁用 MTP 上下文的流水线缓冲，主模型仍使用双 GPU 流水线。MTP 预测头在 RX 9070，不跨 GPU 拆分。图形驱动、设备索引及链路带宽均会影响结果。
 

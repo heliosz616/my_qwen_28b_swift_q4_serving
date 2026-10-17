@@ -78,10 +78,12 @@ Session ID 是本服务扩展，不是 OpenAI 标准必填字段。每轮仍发�
 部署目录为 `qwen27b`，配置环境变量使用 `HUMANLIKE_*` 前缀。
 
 - `config.local.json`：设备、分层、上下文、Q8 KV、MTP 参数、队列与磁盘配额。
-- `models.example.json`：可选模型目录模板。复制为 `models.local.json` 才启用按请求切换；每个注册模型须有独立 manifest 和快照目录，网络策略一致。
+- `models.local.json`：首次启动自动生成单模型注册配置，已有文件不覆盖。默认只有 Swift；后端故障后网关保持在线，下一次生成请求触发重载。`models.example.json` 是扩展配置参考，每个注册模型须有独立 manifest 和快照目录，网络策略一致。
 - `spec_draft_n_max=2`、`spec_draft_p_min=0`：MTP 配置，修改后重启。
 - `reports/runtime.log`、`gateway.log`、`supervisor-error.log`：本地故障日志，不提交。
 - `state/`：密钥、用户表、KV 快照，不公开。删除前先停止服务并自行备份。
 - 同时部署其他 GPU 服务时需共享同一 GPU 锁路径或先停止另一服务；不同仓库副本的锁不会自动互相感知。
 
-性能和复验命令见 [PERFORMANCE.md](docs/PERFORMANCE.md)，运行时补丁说明见 [ARCHITECTURE.md](docs/ARCHITECTURE.md)。本次源码整理通过单元测试与补丁可应用性检查；未在全新机器重跑完整下载、编译、加载流程，不将已有机器的推理结果冒充全新安装验收。
+性能和复验命令见 [PERFORMANCE.md](docs/PERFORMANCE.md)，运行时补丁说明见 [ARCHITECTURE.md](docs/ARCHITECTURE.md)。48 项自动化测试包含网关启动生命周期、发布补丁路径、单模型注册迁移和故障重载请求；模拟引擎测试不代替真实 GPU 验收。未在全新机器重跑完整下载、编译、加载流程。
+
+健康检查返回 `ready` 才表示服务可用；后端故障期间返回 503。下一次生成请求会等待重载完成，加载失败时返回错误，后续请求可重试。首次启动前可用上面的测试命令检查网关代码；首次部署仍需执行真实服务 smoke、工具续接与长窗口测试。

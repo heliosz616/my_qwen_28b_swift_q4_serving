@@ -4,6 +4,16 @@ from pathlib import Path
 import time
 
 
+def ensure_catalog(root, base):
+    """Enable supervisor recovery for fresh and existing single-model installs."""
+    path = Path(root) / 'models.local.json'
+    if not path.exists():
+        # Preserve the legacy single-model manifest and snapshot location.
+        atomic_json(path, {'models': load_catalog(root, base)})
+    load_catalog(root, base, path.name)
+    return path.name
+
+
 def load_catalog(root, base, filename=None):
     if not filename:
         return {base['model']: dict(config=base.copy(), manifest='manifest.json', slots='slots')}

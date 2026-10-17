@@ -88,7 +88,7 @@ async def activate_profile(name):
     fingerprint = dict(model=manifest['sha256'], config=CONFIG, template=props.get('chat_template'),
                        runtime=json.loads((ROOT/'reports'/'runtime-assets.json').read_text()),
                        built=json.loads((ROOT/'reports'/CONFIG.get('runtime_manifest','runtime-built.json')).read_text(encoding='utf-8-sig')),
-                       patch=hashlib.sha256((ROOT/'patches'/'26004-checkpoints.patch').read_bytes()).hexdigest(),schema=1)
+                       patch=hashlib.sha256((ROOT/'patches'/'runtime.patch').read_bytes()).hexdigest(),schema=1)
     version = hashlib.sha256(json.dumps(fingerprint,sort_keys=True).encode()).hexdigest()
     resident = prepared_prompt = None
     await erase()
@@ -219,7 +219,7 @@ async def health():
         ok = healthy
     except Exception:
         ok = False
-    return JSONResponse(dict(status='ok' if ok else 'unavailable',waiting=waiting,active=int(lock.locked()),context=CONFIG['context']),200 if ok else 503)
+    return JSONResponse(dict(status='ready' if ok else 'unavailable',waiting=waiting,active=int(lock.locked()),context=CONFIG['context']),200 if ok else 503)
 
 @app.get('/v1/models')
 async def models():

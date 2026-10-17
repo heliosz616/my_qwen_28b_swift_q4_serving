@@ -13,7 +13,7 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
-from model_profiles import load_catalog, atomic_json
+from model_profiles import load_catalog, atomic_json, ensure_catalog
 sys.path.insert(0, str(ROOT.parent/'runtime'))
 from gpu_lease import GpuLease
 
@@ -94,6 +94,7 @@ def main():
     if not cfgpath.exists():
         cfgpath.write_text((ROOT/'config.example.json').read_text())
     cfg = json.loads(cfgpath.read_text())
+    catalog_file = ensure_catalog(ROOT, cfg)
     if args.default_model:
         catalog=load_catalog(ROOT,cfg,'models.local.json')
         if args.default_model not in catalog:
@@ -116,7 +117,6 @@ def main():
     internal_key=state/'internal-key.txt'
     if not internal_key.exists():
         internal_key.write_text(secrets.token_urlsafe(48))
-    catalog_file = 'models.local.json' if (ROOT/'models.local.json').exists() else None
     profiles = load_catalog(ROOT,cfg,catalog_file)
     slots = state/profiles[cfg['model']]['slots']
     slots.mkdir(exist_ok=True)

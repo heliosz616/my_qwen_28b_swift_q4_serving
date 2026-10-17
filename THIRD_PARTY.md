@@ -4,4 +4,4 @@
 - 模型：<https://huggingface.co/bartowski/ukisai_Swift-Qwen3.8-27b-GGUF>，精确 revision、文件名及 SHA256 见 `qwen27b/model.source.json`。权重不随源码分发，使用者需遵守模型上游许可。
 - Python 依赖：固定版本见 `qwen27b/requirements.lock.txt`，各自遵循其上游许可。
 
-本仓库保留上游版权声明；不将原部署的私人配置、会话或测试音频作为示例发布。
+本仓库保留上游版权声明。

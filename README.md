@@ -1,8 +1,8 @@
 # Swift Qwen 27B IQ4_XS Serving
 
-Windows 上基于 llama.cpp 的 Swift Qwen3.8-27B 本地推理服务。模型权重为上游发布的 IQ4_XS；默认单流 128K、Q8_0 K/V 和 MTP，每轮最多预测 2 tokens。仓库名称中的 28b 为仓库标识，实际模型是 27B。
+Windows 上基于 llama.cpp 的 Swift Qwen3.8-27B 本地推理服务。模型权重为上游发布的 IQ4_XS；默认单流 128K、Q8_0 K/V 和 MTP，每轮最多预测 2 tokens。
 
-本部署仅包含 Swift，不提供旧 Humanlike 模型配置：
+模型配置：
 
 | 项目 | 名称 |
 | --- | --- |
@@ -75,9 +75,7 @@ Session ID 是本服务扩展，不是 OpenAI 标准必填字段。每轮仍发�
 
 ## 配置和维护
 
-部署目录为 `qwen27b`。环境变量仍保留 `HUMANLIKE_*` 名称，以维持接口与补丁兼容；默认下载和运行的只有 Swift。
-
-旧版本使用 `humanlike` 目录。已有安装迁移时先停止服务，再迁移本地配置、模型及状态目录；不要直接复用旧虚拟环境的命令入口或含绝对路径的构建缓存，应在新目录重建环境和运行时。模型 ID、API 和 Key 无需因目录更名而改变。
+部署目录为 `qwen27b`，配置环境变量使用 `HUMANLIKE_*` 前缀。
 
 - `config.local.json`：设备、分层、上下文、Q8 KV、MTP 参数、队列与磁盘配额。
 - `models.example.json`：可选模型目录模板。复制为 `models.local.json` 才启用按请求切换；每个注册模型须有独立 manifest 和快照目录，网络策略一致。
